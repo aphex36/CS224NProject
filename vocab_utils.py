@@ -95,9 +95,9 @@ def load_train_data(word2id):
 		line = line.replace("\n","")
 		review = json.loads(line)
 		if review['funny'] > 0:
-			labels.append([1,0])
+			labels.append([0])
 		else:
-			labels.append([0,1])
+			labels.append([1])
 		train_data.append(review['text'])
 	train_data = pad_sentences(train_data, "<pad>")
 	train_data = perform_lookups(train_data, word2id)
@@ -111,9 +111,9 @@ def load_test_data(word2id):
 		line = line.replace("\n","")
 		review = json.loads(line)
 		if review['funny'] > 0:
-			labels.append([1,0])
+			labels.append([0])
 		else:
-			labels.append([0,1])
+			labels.append([1])
 		test_data.append(review['text'])
 	test_data = pad_sentences(test_data, "<pad>")
 	test_data = perform_lookups(test_data, word2id)

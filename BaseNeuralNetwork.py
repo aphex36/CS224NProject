@@ -9,7 +9,7 @@ class BaseNeuralNetwork(nn.Module):
         super(BaseNeuralNetwork, self).__init__()
 
         self.word2id = word2id
-        self.embeddings = nn.Embedding(num_embeddings=len(self.word2id), embedding_dim=256)
+        self.embeddings = nn.Embedding(num_embeddings=len(self.word2id), embedding_dim=256, padding_idx=0)
         self.layer1 = nn.Linear(256, 100)
         self.layer2 = nn.Linear(100, 150)
         self.layer3 = nn.Linear(150, 2)
@@ -17,11 +17,11 @@ class BaseNeuralNetwork(nn.Module):
     def forward(self, x):
 
         output = self.embeddings(x)
-
+        output = torch.sum(output, dim=0)
         #need to add the embeddings to each other before here
 
         output = F.relu(self.layer1(output))
         output = F.relu(self.layer2(output))
-        output = F.sigmoid(self.layer3(output))
+        output = torch.sigmoid(self.layer3(output))
 
         return output
