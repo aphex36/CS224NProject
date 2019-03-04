@@ -30,7 +30,7 @@ def batch_data(listOfSentences, labels, batches=32):
 
 	newSentences = []
 	newLabels = []
-	numBatches = math.ceil(len(listOfSentences)*1.0/batches)
+	numBatches = int(math.ceil(len(listOfSentences)*1.0/batches))
 	for i in range(numBatches):
 		newSentences.append(listOfSentences[batches*i:batches*(i+1)])
 		newLabels.append(labels[batches*i:batches*(i+1)])
