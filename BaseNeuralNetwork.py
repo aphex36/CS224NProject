@@ -21,17 +21,7 @@ class BaseNeuralNetwork(nn.Module):
         #need to add the embeddings to each other before here
 
         output = F.relu(self.layer1(output))
-        output = F.relu(self.layer2(x))
-        output = F.sigmoid(self.layer3(x))
+        output = F.relu(self.layer2(output))
+        output = F.sigmoid(self.layer3(output))
 
         return output
-
-sampleWordIndex = {"pineapple": 0, "aardvark": 1, "sponge": 2, "spider": 3, "blanket": 4}
-example_sentences = ['pineapple aardvark sponge', 'spider blanket aardvark', 'sponge pineapple']
-
-sentences = [["a"], ["hello there"], ["hi there"], ["incoming"], ["full sentence"], ["my"], ["nama"], ["jeff"]]
-labels = [["funny"], ["funny"], ["not_funny"], ["funny"], ["not_funny"], ["funny"], ["not_funny"], ["funny"]]
-batchSent, batchLab = batch_data(sentences,labels, 2)
-print(batchSent)
-print(batchLab)
-net = BaseNeuralNetwork(sampleWordIndex)

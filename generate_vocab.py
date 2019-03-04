@@ -1,7 +1,7 @@
 import json
 
 vocab = set()
-files = ["train_reviews.json", "test_reviews.json"]
+files = ["smaller_train.json", "smaller_test.json"]
 for fileFound in files:
 	currFile = open(fileFound, 'r')
 	for line in currFile:
