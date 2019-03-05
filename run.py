@@ -35,7 +35,9 @@ def train(word2id):
 	print("training...")
 	for epoch in range(EPOCHS): # for each epoch...
 		running_loss = 0.0
-
+		r=torch.randperm(len(train_x))
+		train_x = train_x[r]
+		train_y = train_y[r]
 		for i in range(len(train_x)): # for each input/label pair...
 			optimizer.zero_grad() # zero out parameter gradients
 
@@ -78,6 +80,7 @@ def test(word2id):
 	print(test_x.size())
 	print(test_y.size())
 	output = bnn(test_x.permute(1,0))
+	print(output)
 	print(output.size())
 	output = torch.argmax(output, dim=1)
 	print(output.size())

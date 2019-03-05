@@ -90,7 +90,7 @@ def load_word2Id(vocabFile, padToken):
 def load_train_data(word2id):
 	labels = []
 	train_data = []
-	currFile = open("smaller_train.json", 'r')
+	currFile = open("smaller_train_shuffled.json", 'r')
 	for line in currFile:
 		line = line.replace("\n","")
 		review = json.loads(line)
@@ -106,7 +106,7 @@ def load_train_data(word2id):
 def load_test_data(word2id):
 	labels = []
 	test_data = []
-	currFile = open("smaller_test.json", 'r')
+	currFile = open("smaller_test_shuffled.json", 'r')
 	for line in currFile:
 		line = line.replace("\n","")
 		review = json.loads(line)
