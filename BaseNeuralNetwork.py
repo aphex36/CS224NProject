@@ -22,6 +22,6 @@ class BaseNeuralNetwork(nn.Module):
 
         output = F.relu(self.layer1(output))
         output = F.relu(self.layer2(output))
-        softmax = torch.nn.Softmax()
+        softmax = torch.nn.Softmax(dim=1)
         output = softmax(self.layer3(output))
         return output

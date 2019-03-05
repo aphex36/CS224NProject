@@ -9,7 +9,7 @@ import sys
 import time
 
 #constants
-EPOCHS = 2
+EPOCHS = 10
 BATCH_SIZE = 4
 word2id = vocab_utils.load_word2Id("vocab.txt", "<pad>")
 
@@ -38,15 +38,7 @@ def train(word2id):
 	print("training...")
 	for epoch in range(EPOCHS): # for each epoch...
 		running_loss = 0.0
-		
-		"""
-		r=torch.randperm(len(train_x))
-		train_x = train_x[r]
-		train_y = train_y[r]
-		for i in range(len(train_x)): # for each input/label pair...
 
-		For single example SGD
-		"""
 		for batch_idx, (train_x, train_y) in enumerate(train_loader): # for each batch...
 			
 			# batch update
@@ -85,9 +77,18 @@ def test(word2id):
 
 	#test
 	output = bnn(test_x.permute(1,0))
-	print(output)
 	output = torch.argmax(output, dim=1)
+	print("confusion matrix:")
 	print(metrics.confusion_matrix(test_y, output))
+	print("accuracy:")
+	print(metrics.accuracy_score(test_y,output))
+	print("F1 score:")
+	print(metrics.f1_score(test_y,output))
+	print("precision:")
+	print(metrics.precision_score(test_y, output))
+	print("recall:")
+	print(metrics.recall_score(test_y, output))
+
 
 def main():
 	print(sys.argv[1])
