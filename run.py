@@ -44,6 +44,8 @@ def train(word2id):
 		train_x = train_x[r]
 		train_y = train_y[r]
 		for i in range(len(train_x)): # for each input/label pair...
+
+		For single example SGD
 		"""
 		for batch_idx, (train_x, train_y) in enumerate(train_loader): # for each batch...
 			
