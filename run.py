@@ -18,8 +18,8 @@ def train(word2id):
 	load_time = time.time()
 	print("loading train data...")
 	train_x, train_y = vocab_utils.load_train_data(word2id)
-	train_x = torch.tensor(train_x)
-	train_y = torch.tensor(train_y, dtype=torch.long)
+	train_x = torch.tensor(train_x) #(20000, 1002)
+	train_y = torch.tensor(train_y, dtype=torch.long) #(20000, 1)
 	load_time = time.time() - load_time
 	print("finished loading in %.2f seconds." % load_time)
 
