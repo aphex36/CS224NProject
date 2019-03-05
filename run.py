@@ -5,7 +5,7 @@ import vocab_utils
 import numpy as np
 import sys
 #constants
-EPOCHS = 10
+EPOCHS = 2
 
 word2id = vocab_utils.load_word2Id("vocab.txt", "<pad>")
 
@@ -45,7 +45,7 @@ for epoch in range(EPOCHS): # for each epoch...
 
 		if i % 2000 == 1999:
 			print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 2000))
-			running_loss = 0.0
+	running_loss = 0.0
 
 print('Finished Training')
 
