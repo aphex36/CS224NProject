@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.utils.data as data
 from BaseNeuralNetwork import BaseNeuralNetwork as BNN
 import vocab_utils
 import numpy as np
@@ -9,7 +10,7 @@ import time
 
 #constants
 EPOCHS = 2
-
+BATCH_SIZE = 4
 word2id = vocab_utils.load_word2Id("vocab.txt", "<pad>")
 
 def train(word2id):
@@ -20,6 +21,8 @@ def train(word2id):
 	train_x, train_y = vocab_utils.load_train_data(word2id)
 	train_x = torch.tensor(train_x) #(20000, 1002)
 	train_y = torch.tensor(train_y, dtype=torch.long) #(20000, 1)
+	train_data = data.TensorDataset(train_x,train_y)
+	train_loader = data.DataLoader(train_data,batch_size=BATCH_SIZE, shuffle=True)
 	load_time = time.time() - load_time
 	print("finished loading in %.2f seconds." % load_time)
 
@@ -27,32 +30,29 @@ def train(word2id):
 	bnn = BNN(word2id)
 	cel = nn.CrossEntropyLoss()
 	optimizer = torch.optim.SGD(bnn.parameters(), lr=0.01)
-	bnn.train()
 	torch.save(bnn.state_dict(), "init_model.bin")
 
 	# train
+	bnn.train()
 	train_time = time.time()
 	print("training...")
 	for epoch in range(EPOCHS): # for each epoch...
 		running_loss = 0.0
-
-		for i in range(len(train_x)): # for each input/label pair...
+		for batch_idx, (train_x, train_y) in enumerate(train_loader): # for each batch...
+			
+			# batch update
 			optimizer.zero_grad() # zero out parameter gradients
-
-			# Change the preds to appropriate shape
-
-			# Need to shape preds into (1, 2) (num examples, num_classes)
-			preds = bnn(train_x[i]).view(1, 2) # predict
-			loss = cel(preds, train_y[i]) # calculate loss
+			preds = bnn(train_x.permute(1,0)) # predict
+			loss = cel(preds, train_y.squeeze()) # calculate loss
 			loss.backward()	# backprop
-			optimizer.step()
+			optimizer.step() # update parameters
 
 			# printing statistics
 			running_loss += loss.item()
-
-			if i % 2000 == 1999:
-				print('[%d, %5d] loss: %.3f, %.2f seconds in' % (epoch + 1, i + 1, running_loss / 2000, time.time() - train_time))
+			if batch_idx % 500 == 499:
+				print('[%d, %5d] loss: %.3f, %.2f seconds in' % (epoch + 1, batch_idx + 1, running_loss / 500, time.time() - train_time))
 				running_loss = 0.0
+
 	print('finished training.')
 
 	#save model with trained parameters
@@ -65,8 +65,8 @@ def test(word2id):
 	#load test data
 	print("loading test data...")
 	test_x, test_y = vocab_utils.load_test_data(word2id)
-	test_x = torch.tensor(test_x)
-	test_y = torch.tensor(test_y, dtype=torch.long)
+	test_x = torch.tensor(test_x) # (2000, 964)
+	test_y = torch.tensor(test_y, dtype=torch.long) # (2000,1)
 	print("finished loading.")
 
 	#load model
@@ -75,12 +75,9 @@ def test(word2id):
 	bnn.eval()
 
 	#test
-	print(test_x.size())
-	print(test_y.size())
 	output = bnn(test_x.permute(1,0))
-	print(output.size())
+	print(output)
 	output = torch.argmax(output, dim=1)
-	print(output.size())
 	print(metrics.confusion_matrix(test_y, output))
 
 def main():
