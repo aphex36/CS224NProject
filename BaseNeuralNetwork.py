@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from vocab_utils import perform_lookups, batch_data
 
 class BaseNeuralNetwork(nn.Module):
-
     def __init__(self, word2id):
         super(BaseNeuralNetwork, self).__init__()
 

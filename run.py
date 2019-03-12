@@ -1,19 +1,25 @@
+#USAGE: python3 run.py {train, test} {bnn, rnn} model_savefile
 import torch
 import torch.nn as nn
 import torch.utils.data as data
-from BaseNeuralNetwork import BaseNeuralNetwork as BNN
 import vocab_utils
 import numpy as np
 import sklearn.metrics as metrics
 import sys
 import time
 
+#models
+from BaseNeuralNetwork import BaseNeuralNetwork as BNN
+from RNN import RNN
+#from CNN import CNN
+
 #constants
 EPOCHS = 10
 BATCH_SIZE = 4
-word2id = vocab_utils.load_word2Id("vocab.txt", "<pad>")
+vocabfile = "vocab.txt"
 
-def train(word2id):
+
+def train(model, word2id, savefile):
 	
 	# load data
 	load_time = time.time()
@@ -27,13 +33,11 @@ def train(word2id):
 	print("finished loading in %.2f seconds." % load_time)
 
 	# initialize model
-	bnn = BNN(word2id)
 	cel = nn.CrossEntropyLoss()
-	optimizer = torch.optim.SGD(bnn.parameters(), lr=0.01)
-	torch.save(bnn.state_dict(), "init_model.bin")
+	optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
 	# train
-	bnn.train()
+	model.train()
 	train_time = time.time()
 	print("training...")
 	for epoch in range(EPOCHS): # for each epoch...
@@ -43,7 +47,7 @@ def train(word2id):
 			
 			# batch update
 			optimizer.zero_grad() # zero out parameter gradients
-			preds = bnn(train_x.permute(1,0)) # predict
+			preds = model(train_x.permute(1,0)) # predict
 			loss = cel(preds, train_y.squeeze()) # calculate loss
 			loss.backward()	# backprop
 			optimizer.step() # update parameters
@@ -58,10 +62,10 @@ def train(word2id):
 
 	#save model with trained parameters
 	print('saving...')
-	torch.save(bnn.state_dict(), "model.bin")
+	torch.save(model.state_dict(), savefile)
 	print('finished saving.')
 
-def test(word2id):
+def test(model, word2id, savefile):
 
 	#load test data
 	print("loading test data...")
@@ -71,12 +75,11 @@ def test(word2id):
 	print("finished loading.")
 
 	#load model
-	bnn = BNN(word2id)
-	bnn.load_state_dict(torch.load("model.bin"))
-	bnn.eval()
+	model.load_state_dict(torch.load(savefile))
+	model.eval()
 
 	#test
-	output = bnn(test_x.permute(1,0))
+	output = model(test_x.permute(1,0))
 	output = torch.argmax(output, dim=1)
 	print("confusion matrix:")
 	print(metrics.confusion_matrix(test_y, output))
@@ -91,11 +94,25 @@ def test(word2id):
 
 
 def main():
-	print(sys.argv[1])
-	if sys.argv[1] == 'train':
-		train(word2id)
-	elif sys.argv[1] == 'test':
-		test(word2id)
+	command = sys.argv[1]
+	model_type = sys.argv[2]
+	savefile = sys.argv[3]
+
+	#initializing model
+	word2id = vocab_utils.load_word2Id(vocabfile, "<pad>")
+	model = None
+	if model_type == "bnn":
+		model = BNN(word2id)
+#	elif model_type == "cnn":
+#		model = CNN(word2id)
+	elif model_type == "rnn":
+		model = RNN(word2id)
+
+	#train or test
+	if command == 'train':
+		train(model, word2id, savefile)
+	elif command == 'test':
+		test(model, word2id, savefile)
 
 if __name__ == "__main__":
 	main()
