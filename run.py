@@ -10,8 +10,8 @@ import time
 
 #models
 from BaseNeuralNetwork import BaseNeuralNetwork as BNN
-from RNN import RNN
-#from CNN import CNN
+#from RNN import RNN
+from CNN import CNN
 
 #constants
 EPOCHS = 10
