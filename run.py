@@ -1,4 +1,4 @@
-#USAGE: python3 run.py {train, test} {bnn, rnn} model_savefile
+#USAGE: python3 run.py {train, test} {bnn, rnn, cnn} model_savefile
 import torch
 import torch.nn as nn
 import torch.utils.data as data
@@ -103,8 +103,8 @@ def main():
 	model = None
 	if model_type == "bnn":
 		model = BNN(word2id)
-#	elif model_type == "cnn":
-#		model = CNN(word2id)
+	elif model_type == "cnn":
+	    model = CNN(word2id)
 	elif model_type == "rnn":
 		model = RNN(word2id)
 

@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from vocab_utils import perform_lookups, batch_data
 
 class BaseNeuralNetwork(nn.Module):
+
     def __init__(self, word2id):
         super(BaseNeuralNetwork, self).__init__()
 
@@ -21,6 +22,6 @@ class BaseNeuralNetwork(nn.Module):
 
         output = F.relu(self.layer1(output))
         output = F.relu(self.layer2(output))
-        softmax = torch.nn.Softmax(dim=1)
+        softmax = torch.nn.Softmax()
         output = softmax(self.layer3(output))
         return output
