@@ -114,11 +114,9 @@ def main():
 	model_type = sys.argv[2]
 	savefile = sys.argv[3]
 	devicename = sys.argv[4]
-	device = torch.device("cpu")
-	if device == "cuda":
-		device = torch.device("cuda:0")
 
-	#initializing model
+
+	#initialize model
 	word2id = vocab_utils.load_word2Id(vocabfile, "<pad>")
 	model = None
 	if model_type == "bnn":
@@ -127,6 +125,11 @@ def main():
 	    model = CNN(word2id)
 	elif model_type == "rnn":
 		model = RNN(word2id)
+
+	# store model on correct device
+	device = torch.device("cpu")
+	if devicename == "cuda":
+		device = torch.device("cuda:0")
 	model.to(device)
 
 	#train or test
