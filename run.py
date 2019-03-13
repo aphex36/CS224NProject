@@ -17,13 +17,13 @@ from CNN import CNN
 
 #constants
 EPOCHS = 10
-BATCH_SIZE = 4
+BATCH_SIZE = 32
 vocabfile = "./vocab.txt"
 train_pkl = "./train.pkl"
 test_pkl = "./test.pkl"
 
 
-def train(model, word2id, savefile):
+def train(model, word2id, savefile, device):
 	
 	# load data
 	load_time = time.time()
@@ -35,8 +35,8 @@ def train(model, word2id, savefile):
 		train_data = vocab_utils.load_train_data(word2id)
 		pickle.dump(train_data, open(train_pkl, "wb"))
 	train_x, train_y = train_data
-	train_x = torch.tensor(train_x) #(20000, 1002)
-	train_y = torch.tensor(train_y, dtype=torch.long) #(20000, 1)
+	train_x = torch.tensor(train_x, device=device) #(20000, 1002)
+	train_y = torch.tensor(train_y, dtype=torch.long, device=device) #(20000, 1)
 	train_data = data.TensorDataset(train_x,train_y)
 	train_loader = data.DataLoader(train_data,batch_size=BATCH_SIZE, shuffle=True)
 	load_time = time.time() - load_time
@@ -75,7 +75,7 @@ def train(model, word2id, savefile):
 	torch.save(model.state_dict(), savefile)
 	print('finished saving.')
 
-def test(model, word2id, savefile):
+def test(model, word2id, savefile, device):
 
 	#load test data
 	print("loading test data...")
@@ -86,8 +86,8 @@ def test(model, word2id, savefile):
 		test_data = vocab_utils.load_test_data(word2id)
 		pickle.dump(test_data, open(test_pkl, "wb"))
 	test_x, test_y = test_data
-	test_x = torch.tensor(test_x) # (2000, 964)
-	test_y = torch.tensor(test_y, dtype=torch.long) # (2000,1)
+	test_x = torch.tensor(test_x, device=device) # (2000, 964)
+	test_y = torch.tensor(test_y, dtype=torch.long, device=device) # (2000,1)
 	print("finished loading.")
 
 	#load model
@@ -131,9 +131,9 @@ def main():
 
 	#train or test
 	if command == 'train':
-		train(model, word2id, savefile)
+		train(model, word2id, savefile, device)
 	elif command == 'test':
-		test(model, word2id, savefile)
+		test(model, word2id, savefile, device)
 
 if __name__ == "__main__":
 	main()
