@@ -87,10 +87,10 @@ def load_word2Id(vocabFile, padToken):
 	word2Id[padToken] = 0
 	return word2Id
 
-def load_train_data(word2id):
+def load_train_data(word2id, train_datafile):
 	labels = []
 	train_data = []
-	currFile = open("smaller_train_shuffled.json", 'r')
+	currFile = open(train_datafile, 'r')
 	for line in currFile:
 		line = line.replace("\n","")
 		review = json.loads(line)
@@ -103,10 +103,10 @@ def load_train_data(word2id):
 	train_data = perform_lookups(train_data, word2id)
 	return train_data, labels
 
-def load_test_data(word2id):
+def load_test_data(word2id, test_datafile):
 	labels = []
 	test_data = []
-	currFile = open("smaller_test_shuffled.json", 'r')
+	currFile = open(test_datafile, 'r')
 	for line in currFile:
 		line = line.replace("\n","")
 		review = json.loads(line)

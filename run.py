@@ -23,7 +23,7 @@ train_pkl = "./train.pkl"
 test_pkl = "./test.pkl"
 
 
-def train(model, word2id, savefile, device):
+def train(trainfile, model, word2id, savefile, device):
 	
 	# load data
 	load_time = time.time()
@@ -32,7 +32,7 @@ def train(model, word2id, savefile, device):
 	if os.path.isfile(train_pkl):
 		train_data = pickle.load(open(train_pkl, "rb"))
 	else:
-		train_data = vocab_utils.load_train_data(word2id)
+		train_data = vocab_utils.load_train_data(word2id, trainfile)
 		pickle.dump(train_data, open(train_pkl, "wb"))
 	train_x, train_y = train_data
 	train_x = torch.tensor(train_x, device=device) #(20000, 1002)
@@ -76,7 +76,7 @@ def train(model, word2id, savefile, device):
 	torch.save(model.state_dict(), savefile)
 	print('finished saving.')
 
-def test(model, word2id, savefile, device):
+def test(testfile, model, word2id, savefile, device):
 
 	#load test data
 	print("loading test data...")
@@ -84,7 +84,7 @@ def test(model, word2id, savefile, device):
 	if os.path.isfile(test_pkl):
 		test_data = pickle.load(open(test_pkl, "rb"))
 	else:
-		test_data = vocab_utils.load_test_data(word2id)
+		test_data = vocab_utils.load_test_data(word2id, testfile)
 		pickle.dump(test_data, open(test_pkl, "wb"))
 	test_x, test_y = test_data
 	test_x = torch.tensor(test_x, device=device) # (2000, 964)
@@ -112,9 +112,10 @@ def test(model, word2id, savefile, device):
 
 def main():
 	command = sys.argv[1]
-	model_type = sys.argv[2]
-	savefile = sys.argv[3]
-	devicename = sys.argv[4]
+	datafile = sys.argv[2]
+	model_type = sys.argv[3]
+	savefile = sys.argv[4]
+	devicename = sys.argv[5]
 
 
 	#initialize model
@@ -136,9 +137,9 @@ def main():
 	#train or test
 	print("%sing model %s on device %s" % (command, model_type, device))
 	if command == 'train':
-		train(model, word2id, savefile, device)
+		train(datafile, model, word2id, savefile, device)
 	elif command == 'test':
-		test(model, word2id, savefile, device)
+		test(datafile, model, word2id, savefile, device)
 
 if __name__ == "__main__":
 	main()
