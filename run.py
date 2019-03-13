@@ -122,7 +122,7 @@ def main():
 	if model_type == "bnn":
 		model = BNN(word2id)
 	elif model_type == "cnn":
-	    model = CNN(word2id)
+		model = CNN(word2id)
 	elif model_type == "rnn":
 		model = RNN(word2id)
 
@@ -133,6 +133,7 @@ def main():
 	model.to(device)
 
 	#train or test
+	print("%sing model %s on device %s" % (command, model_type, device))
 	if command == 'train':
 		train(model, word2id, savefile, device)
 	elif command == 'test':
