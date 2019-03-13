@@ -7,6 +7,8 @@ import numpy as np
 import sklearn.metrics as metrics
 import sys
 import time
+import os
+import pickle
 
 #models
 from BaseNeuralNetwork import BaseNeuralNetwork as BNN
@@ -16,7 +18,9 @@ from CNN import CNN
 #constants
 EPOCHS = 10
 BATCH_SIZE = 4
-vocabfile = "vocab.txt"
+vocabfile = "./vocab.txt"
+train_pkl = "./train.pkl"
+test_pkl = "./test.pkl"
 
 
 def train(model, word2id, savefile):
@@ -24,7 +28,13 @@ def train(model, word2id, savefile):
 	# load data
 	load_time = time.time()
 	print("loading train data...")
-	train_x, train_y = vocab_utils.load_train_data(word2id)
+	train_data = None
+	if os.path.isfile(train_pkl):
+		train_data = pickle.load(open(train_pkl, "rb"))
+	else:
+		train_data = vocab_utils.load_train_data(word2id)
+		pickle.dump(train_data, open(train_pkl, "wb"))
+	train_x, train_y = train_data
 	train_x = torch.tensor(train_x) #(20000, 1002)
 	train_y = torch.tensor(train_y, dtype=torch.long) #(20000, 1)
 	train_data = data.TensorDataset(train_x,train_y)
@@ -69,7 +79,13 @@ def test(model, word2id, savefile):
 
 	#load test data
 	print("loading test data...")
-	test_x, test_y = vocab_utils.load_test_data(word2id)
+	test_data = None
+	if os.path.isfile(test_pkl):
+		test_data = pickle.load(open(test_pkl, "rb"))
+	else:
+		test_data = vocab_utils.load_test_data(word2id)
+		pickle.dump(test_data, open(test_pkl, "wb"))
+	test_x, test_y = test_data
 	test_x = torch.tensor(test_x) # (2000, 964)
 	test_y = torch.tensor(test_y, dtype=torch.long) # (2000,1)
 	print("finished loading.")
