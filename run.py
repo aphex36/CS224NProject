@@ -1,4 +1,4 @@
-#USAGE: python3 run.py {train, test} {bnn, rnn, cnn} model_savefile
+#USAGE: python3 run.py {train, test} {bnn, rnn, cnn} model_savefile {cuda, cpu}
 import torch
 import torch.nn as nn
 import torch.utils.data as data
@@ -113,6 +113,10 @@ def main():
 	command = sys.argv[1]
 	model_type = sys.argv[2]
 	savefile = sys.argv[3]
+	devicename = sys.argv[4]
+	device = torch.device("cpu")
+	if device == "cuda":
+		device = torch.device("cuda:0")
 
 	#initializing model
 	word2id = vocab_utils.load_word2Id(vocabfile, "<pad>")
@@ -123,6 +127,7 @@ def main():
 	    model = CNN(word2id)
 	elif model_type == "rnn":
 		model = RNN(word2id)
+	model.to(device)
 
 	#train or test
 	if command == 'train':
