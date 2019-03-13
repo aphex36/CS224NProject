@@ -40,7 +40,8 @@ def train(model, word2id, savefile, device):
 	train_data = data.TensorDataset(train_x,train_y)
 	train_loader = data.DataLoader(train_data,batch_size=BATCH_SIZE, shuffle=True)
 	load_time = time.time() - load_time
-	print("finished loading in %.2f seconds." % load_time)
+	examples = train_y.size()[0]
+	print("finished loading %d examples in %.2f seconds." % (examples, load_time))
 
 	# initialize model
 	cel = nn.CrossEntropyLoss()
