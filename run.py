@@ -87,7 +87,13 @@ def test(testfile, model, word2id, savefile, device):
 		test_data = vocab_utils.load_test_data(word2id, testfile)
 		pickle.dump(test_data, open(test_pkl, "wb"))
 	test_x, test_y = test_data
-	test_x = torch.tensor(test_x, device=device) # (2000, 964)
+
+	## solving rnn mismatch ##
+	#test_x = torch.tensor(test_x, device=device) # (2000, 964)
+	#test_x_pad = torch.zeros(2000,1002 - 964, dtype=torch.long, device=device)
+	#test_x = torch.cat((test_x,test_x_pad),dim=1)
+	##########################
+
 	test_y = torch.tensor(test_y, dtype=torch.long, device=device) # (2000,1)
 	print("finished loading.")
 
