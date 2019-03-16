@@ -45,7 +45,7 @@ def train(trainfile, model, word2id, savefile, device):
 
 	# initialize model
 	cel = nn.CrossEntropyLoss()
-	optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+	optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
 
 	# train
 	model.train()
