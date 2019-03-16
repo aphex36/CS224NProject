@@ -54,12 +54,12 @@ def train(trainfile, model, word2id, savefile, device):
 	for epoch in range(EPOCHS): # for each epoch...
 		running_loss = 0.0
 
-		for batch_idx, (train_x, train_y) in enumerate(train_loader): # for each batch...
+		for batch_idx, (batch_x, batch_y) in enumerate(train_loader): # for each batch...
 			
 			# batch update
 			optimizer.zero_grad() # zero out parameter gradients
-			preds = model(train_x.permute(1,0)) # predict
-			loss = cel(preds, train_y.squeeze()) # calculate loss
+			preds = model(batch_x.permute(1,0)) # predict
+			loss = cel(preds, batch_y.squeeze()) # calculate loss
 			loss.backward()	# backprop
 			optimizer.step() # update parameters
 
@@ -87,14 +87,16 @@ def test(testfile, model, word2id, savefile, device):
 		test_data = vocab_utils.load_test_data(word2id, testfile)
 		pickle.dump(test_data, open(test_pkl, "wb"))
 	test_x, test_y = test_data
+	test_x = torch.tensor(test_x, device=device) # (2000, 964)
+	test_y = torch.tensor(test_y, dtype=torch.long, device=device) # (2000,1)	
 
 	## solving rnn mismatch ##
-	#test_x = torch.tensor(test_x, device=device) # (2000, 964)
 	#test_x_pad = torch.zeros(2000,1002 - 964, dtype=torch.long, device=device)
 	#test_x = torch.cat((test_x,test_x_pad),dim=1)
 	##########################
 
-	test_y = torch.tensor(test_y, dtype=torch.long, device=device) # (2000,1)
+	test_data = data.TensorDataset(test_x,test_y)
+	test_loader = data.DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=True)
 	print("finished loading.")
 
 	#load model
@@ -102,18 +104,24 @@ def test(testfile, model, word2id, savefile, device):
 	model.eval()
 
 	#test
-	output = model(test_x.permute(1,0))
-	output = torch.argmax(output, dim=1)
+	outputs = torch.tensor([],dtype=torch.long, device=device)
+	true_y = torch.tensor([],dtype=torch.long, device=device)
+	for batch_x, batch_y in test_loader:
+		output = model(batch_x.permute(1,0).contiguous())
+		output = torch.argmax(output, dim=1)
+		outputs = torch.cat((outputs,output))
+		true_y = torch.cat((true_y, batch_y))
+
 	print("confusion matrix:")
-	print(metrics.confusion_matrix(test_y, output))
+	print(metrics.confusion_matrix(true_y, outputs))
 	print("accuracy:")
-	print(metrics.accuracy_score(test_y,output))
+	print(metrics.accuracy_score(true_y,outputs))
 	print("F1 score:")
-	print(metrics.f1_score(test_y,output))
+	print(metrics.f1_score(true_y,outputs))
 	print("precision:")
-	print(metrics.precision_score(test_y, output))
+	print(metrics.precision_score(true_y, outputs))
 	print("recall:")
-	print(metrics.recall_score(test_y, output))
+	print(metrics.recall_score(true_y, outputs))
 
 
 def main():
