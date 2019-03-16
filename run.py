@@ -14,7 +14,7 @@ import pickle
 from BaseNeuralNetwork import BaseNeuralNetwork as BNN
 from RNN import RNN
 from CNN import CNN
-
+from LSTM_CNN import LSTM_CNN
 #constants
 EPOCHS = 100
 BATCH_SIZE = 16
@@ -123,6 +123,8 @@ def main():
 	    model = CNN(word2id)
 	elif model_type == "rnn":
 		model = RNN(word2id)
+	elif model_type = "lstm_cnn":
+		model = LSTM_CNN(word2id)
 
 	#train or test
 	if command == 'train':

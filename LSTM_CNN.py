@@ -3,13 +3,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 from vocab_utils import perform_lookups, batch_data
 
-class CNN(nn.Module):
+class LSTM_CNN(nn.Module):
 
     def __init__(self, word2id):
-        super(CNN, self).__init__()
+        super(LSTM_CNN, self).__init__()
 
         self.word2id = word2id
+        self.hidden_size = 256
         self.embeddings = nn.Embedding(num_embeddings=len(self.word2id), embedding_dim=256, padding_idx=0)
+        self.LSTM = nn.LSTM(self.embed_size, self.hidden_size, bias=True, bidirectional=True)
         self.layer_window_2 = nn.Conv1d(in_channels=256, out_channels=4, kernel_size=2)
         self.layer_window_3 = nn.Conv1d(in_channels=256, out_channels=4, kernel_size=3)
         self.layer_window_4 = nn.Conv1d(in_channels=256, out_channels=4, kernel_size=4)
@@ -19,9 +21,27 @@ class CNN(nn.Module):
 
     def forward(self, x):
 
-        output = self.embeddings(x) #seq_len, batch_size, embed_size
-        output = output.permute(1,2,0) # batch_size, embed_size seq_len
-        batch_size = output.size()[0]
+
+        #embeddings
+        embeddings = self.embeddings(x) #seq_len, batch_size, embed_size
+        
+        #initializing h, c
+        seq_len, batch_size, embed_size = embeddings.size()
+        #h0 = torch.randn(seq_len, batch_size, hidden_size)
+        #c0 = torch.randn(seq_len, batch_size, hidden_size)
+        #hidden = (h0,c0)
+
+        #lstm
+        lstm_out, (hn, cn) = self.LSTM(embeddings) 
+        # lstm_out: seq_len, batch_size, 2*hidden_size 
+        # hn: 2, batch_size, hidden_size
+
+        print(lstm_out.size())
+        output = lstm_out.permute(2,0,1) # batch_size, embed_size seq_len
+        output = output.contiguous()
+        print(output.size())
+        x = 3/0
+        batch_size = output.size()[0] 
         embedding_dim = output.size()[1]
 
         window_2 = self.layer_window_2(output)
