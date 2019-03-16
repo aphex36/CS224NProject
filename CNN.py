@@ -20,7 +20,7 @@ class CNN(nn.Module):
     def forward(self, x):
 
         output = self.embeddings(x)
-        output = output.permute(1,2,0)
+        output = output.permute(1,2,0).contiguous()
         batch_size = output.size()[0]
         embedding_dim = output.size()[1]
 
