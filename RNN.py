@@ -16,12 +16,6 @@ class RNN(torch.nn.Module):
 		self.fully_connected = nn.Linear(2*self.hidden_size*self.seq_len, 2, bias=False)
 		self.softmax = nn.Softmax()
 
-		#dropout?
-
-		#self.ful = nn.Linear(hidden_size, hidden_size/2)
-
-		# TODO: embedding --(embeddings)--> lstm --(hiddens)--> 
-		# context-attention --(r)--> fully-connected --
 	
 	def forward(self, x): # x: seq_len, batch_size
 
@@ -30,9 +24,6 @@ class RNN(torch.nn.Module):
 		
 		#initializing h, c
 		seq_len, batch_size, embed_size = embeddings.size()
-		#h0 = torch.randn(seq_len, batch_size, hidden_size)
-		#c0 = torch.randn(seq_len, batch_size, hidden_size)
-		#hidden = (h0,c0)
 
 		#lstm
 		lstm_out, (hn, cn) = self.LSTM(embeddings) 
@@ -45,14 +36,3 @@ class RNN(torch.nn.Module):
 		output = self.softmax(linear_out)
 
 		return output
-
-
-
-		#output = torch.sum(output, dim=0)
-		
-		#need to add the embeddings to each other before here
-		#output = F.relu(self.layer1(output))
-		#output = F.relu(self.layer2(output))
-		#softmax = torch.nn.Softmax(dim=1)
-		#output = softmax(self.layer3(output))
-		#return output
