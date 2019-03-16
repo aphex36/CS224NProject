@@ -8,6 +8,7 @@ for fileFound in files:
 		words = json.loads(line)['text'].split(' ')
 		for word in words:
 			word = word.replace("\n","")
+			word = word.replace("\r", "")
 			word = word.replace(",", "")
 			word = word.replace(":", "")
 			word = word.replace(")", "")

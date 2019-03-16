@@ -16,8 +16,8 @@ from RNN import RNN
 from CNN import CNN
 
 #constants
-EPOCHS = 10
-BATCH_SIZE = 4
+EPOCHS = 100
+BATCH_SIZE = 16
 vocabfile = "./vocab.txt"
 train_pkl = "./train.pkl"
 test_pkl = "./test.pkl"
@@ -44,7 +44,7 @@ def train(model, word2id, savefile):
 
 	# initialize model
 	cel = nn.CrossEntropyLoss()
-	optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+	optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
 
 	# train
 	model.train()
