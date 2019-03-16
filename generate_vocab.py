@@ -1,7 +1,11 @@
 import json
+import sys
+
+trainfile = sys.argv[1]
+testfile = sys.argv[2]
 
 vocab = set()
-files = ["smaller_train.json", "smaller_test.json"]
+files = [trainfile, testfile]
 for fileFound in files:
 	currFile = open(fileFound, 'r')
 	for line in currFile:
