@@ -10,12 +10,13 @@ class LSTM_CNN(nn.Module):
 
         self.word2id = word2id
         self.hidden_size = 256
+        self.embed_size = 256
         self.embeddings = nn.Embedding(num_embeddings=len(self.word2id), embedding_dim=256, padding_idx=0)
         self.LSTM = nn.LSTM(self.embed_size, self.hidden_size, bias=True, bidirectional=True)
-        self.layer_window_2 = nn.Conv1d(in_channels=256, out_channels=4, kernel_size=2)
-        self.layer_window_3 = nn.Conv1d(in_channels=256, out_channels=4, kernel_size=3)
-        self.layer_window_4 = nn.Conv1d(in_channels=256, out_channels=4, kernel_size=4)
-        self.layer_window_5 = nn.Conv1d(in_channels=256, out_channels=4, kernel_size=5)
+        self.layer_window_2 = nn.Conv1d(in_channels=2*self.hidden_size, out_channels=4, kernel_size=2)
+        self.layer_window_3 = nn.Conv1d(in_channels=2*self.hidden_size, out_channels=4, kernel_size=3)
+        self.layer_window_4 = nn.Conv1d(in_channels=2*self.hidden_size, out_channels=4, kernel_size=4)
+        self.layer_window_5 = nn.Conv1d(in_channels=2*self.hidden_size, out_channels=4, kernel_size=5)
         self.layer1 = nn.Linear(16, 50)
         self.layer2 = nn.Linear(50, 2)
 
@@ -36,11 +37,8 @@ class LSTM_CNN(nn.Module):
         # lstm_out: seq_len, batch_size, 2*hidden_size 
         # hn: 2, batch_size, hidden_size
 
-        print(lstm_out.size())
-        output = lstm_out.permute(2,0,1) # batch_size, embed_size seq_len
+        output = lstm_out.permute(1,2,0) # batch_size, embed_size seq_len
         output = output.contiguous()
-        print(output.size())
-        x = 3/0
         batch_size = output.size()[0] 
         embedding_dim = output.size()[1]
 

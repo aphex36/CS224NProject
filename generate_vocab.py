@@ -10,6 +10,8 @@ for fileFound in files:
 	currFile = open(fileFound, 'r')
 	for line in currFile:
 		words = json.loads(line)['text'].split(' ')
+
+		# TF: allWords = []
 		for word in words:
 			word = word.replace("\n","")
 			word = word.replace("\r", "")
@@ -26,7 +28,9 @@ for fileFound in files:
 					question_marks = wordFound.split("?")
 					for finalWord in question_marks:
 						if len(finalWord) != 0:
+							#allWords.append(finalWord.lower())
 							vocab.add(finalWord.lower())
+		# check how many 'word' appears in allWords
 	currFile.close()
 
 vocabFile = open('vocab.txt', 'w')

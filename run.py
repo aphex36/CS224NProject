@@ -1,4 +1,4 @@
-#USAGE: python3 run.py {train, test} {bnn, rnn, cnn} model_savefile {cuda, cpu}
+#USAGE: python3 run.py {train, test} {bnn, rnn, cnn, lstm_cnn} model_savefile {cuda, cpu}
 import torch
 import torch.nn as nn
 import torch.utils.data as data
@@ -17,7 +17,7 @@ from CNN import CNN
 from LSTM_CNN import LSTM_CNN
 #constants
 EPOCHS = 100
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 vocabfile = "./vocab.txt"
 train_pkl = "./train.pkl"
 test_pkl = "./test.pkl"
@@ -141,7 +141,7 @@ def main():
 		model = CNN(word2id)
 	elif model_type == "rnn":
 		model = RNN(word2id)
-	elif model_type = "lstm_cnn":
+	elif model_type == "lstm_cnn":
 		model = LSTM_CNN(word2id)
 
 	# store model on correct device
