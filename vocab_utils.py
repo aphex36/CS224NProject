@@ -9,6 +9,7 @@ def perform_lookups(listOfSentences, word2id):
 	for sentence in listOfSentences:
 		indices = []
 		words = sentence.split(' ')
+
 		for word in words:
 			word = word.replace("\n","")
 			word = word.replace("\r", "")

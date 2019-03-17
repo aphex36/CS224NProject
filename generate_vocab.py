@@ -2,7 +2,7 @@ import json
 import sys
 import collections
 import pickle
-
+import numpy as np
 trainfile = sys.argv[1]
 testfile = sys.argv[2]
 
@@ -44,8 +44,8 @@ for fileFound in files:
 # idf calculation
 idfs = {}
 for word, count in idf_counts.items():
-    idfs[word] = float(count) / num_docs
-pickle.dump(idfs, "idf.pkl")
+    idfs[word] = np.log(num_docs/float(count))
+pickle.dump(idfs, open("idf.pkl", "wb"))
 
 vocabFile = open('vocab.txt', 'w')
 for word in vocab:

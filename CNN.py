@@ -28,7 +28,6 @@ class CNN(nn.Module):
         max_pool_2 = nn.MaxPool1d(window_2.size()[-1])
         output_window_2 = max_pool_2(window_2)
 
-
         window_3 = self.layer_window_3(output)
         max_pool_3 = nn.MaxPool1d(window_3.size()[-1])
         output_window_3 = max_pool_3(window_3)

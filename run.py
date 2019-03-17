@@ -16,14 +16,14 @@ from RNN import RNN
 from CNN import CNN
 from LSTM_CNN import LSTM_CNN
 #constants
-EPOCHS = 100
-BATCH_SIZE = 32
+EPOCHS = 10
+BATCH_SIZE = 16 
 vocabfile = "./vocab.txt"
 train_pkl = "./train.pkl"
 test_pkl = "./test.pkl"
 
 
-def train(trainfile, model, word2id, savefile, device):
+def train(trainfile, model, word2id, savefile, device, isTfIdf):
 	
 	# load data
 	load_time = time.time()
@@ -62,7 +62,7 @@ def train(trainfile, model, word2id, savefile, device):
 			loss = cel(preds, batch_y.squeeze()) # calculate loss
 			loss.backward()	# backprop
 			optimizer.step() # update parameters
-
+			
 			# printing statistics
 			running_loss += loss.item()
 			if batch_idx % 500 == 499:
@@ -76,7 +76,7 @@ def train(trainfile, model, word2id, savefile, device):
 	torch.save(model.state_dict(), savefile)
 	print('finished saving.')
 
-def test(testfile, model, word2id, savefile, device):
+def test(testfile, model, word2id, savefile, device, isTfIdf):
 
 	#load test data
 	print("loading test data...")
@@ -132,13 +132,21 @@ def main():
 	model_type = sys.argv[3]
 	savefile = sys.argv[4]
 	devicename = sys.argv[5]
+	isTFIDF = sys.argv[6]
 
 
 	#initialize model
 	word2id = vocab_utils.load_word2Id(vocabfile, "<pad>")
+	id2word = {}
+	for word in word2id:
+		id2word[word2id[word]] = word
 	model = None
 	if model_type == "bnn":
-		model = BNN(word2id)
+		if isTFIDF != "tf-idf":
+			model = BNN(word2id, id2word, None)
+		else:
+			idf = pickle.load(open("idf.pkl", "rb"))
+			model = BNN(word2id, id2word, idf)
 	elif model_type == "cnn":
 		model = CNN(word2id)
 	elif model_type == "rnn":
@@ -155,9 +163,9 @@ def main():
 	#train or test
 	print("%sing model %s on device %s" % (command, model_type, device))
 	if command == 'train':
-		train(datafile, model, word2id, savefile, device)
+		train(datafile, model, word2id, savefile, device, isTFIDF)
 	elif command == 'test':
-		test(datafile, model, word2id, savefile, device)
+		test(datafile, model, word2id, savefile, device, isTFIDF)
 
 if __name__ == "__main__":
 	main()
