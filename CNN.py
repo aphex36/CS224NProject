@@ -19,8 +19,8 @@ class CNN(nn.Module):
 
     def forward(self, x):
 
-        output = self.embeddings(x) #seq_len, batch_size, embed_size
-        output = output.permute(1,2,0) # batch_size, embed_size seq_len
+        output = self.embeddings(x)
+        output = output.permute(1,2,0).contiguous()
         batch_size = output.size()[0]
         embedding_dim = output.size()[1]
 

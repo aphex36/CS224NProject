@@ -112,6 +112,8 @@ def test(testfile, model, word2id, savefile, device):
 		outputs = torch.cat((outputs,output))
 		true_y = torch.cat((true_y, batch_y))
 
+	true_y = true_y.cpu()
+	outputs = outputs.cpu()
 	print("confusion matrix:")
 	print(metrics.confusion_matrix(true_y, outputs))
 	print("accuracy:")
